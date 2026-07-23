@@ -55,14 +55,30 @@ AI reviewers are as *useful* as humans. It measures whether the anchored code
 later changed, which is a proxy with a known bias — see Limitations. But the
 gap is far narrower than the "AI review is just noise" consensus assumes.
 
-### Per-vendor
+### There is deliberately no vendor ranking here
 
-> **The sample is too small for per-vendor conclusions.** Several vendors appear
-> in fewer than five repositories. This table is published for transparency about
-> what the corpus contains, not as a ranking. Do not cite it as one.
+Per-vendor action rates are computed and stored in
+[`data/report.json`](data/report.json). They are **not** published as a
+comparison table, because the data cannot support the ranking readers would take
+from one:
 
-See [`STUDY.md`](STUDY.md) for the current generated table, and
-[`data/report.json`](data/report.json) for the full machine-readable result.
+- **Volume confound.** Reviewers differ in threads per pull request. A chattier
+  tool mechanically scores a lower hit rate regardless of quality.
+- **Population confound.** Vendors sit in largely non-overlapping sets of
+  repositories — different languages, sizes, and review cultures.
+- **Timing confound.** The action proxy is sensitive to *when* in a pull
+  request's life a comment lands, and vendors differ systematically in that.
+
+None of these are controlled for. The aggregate human-versus-AI gap is reported
+because it is large, stable across sample sizes, and biased *against* the
+conclusion drawn from it. A vendor-versus-vendor gap is none of those things.
+
+The raw scans are public, so this is a decision not to make a claim — not a
+decision to withhold data. If you want to compute it, everything you need is in
+[`data/scans.jsonl`](data/scans.jsonl).
+
+See [`STUDY.md`](STUDY.md) for per-vendor **presence** — how much of the corpus
+each reviewer accounts for, which is a census fact rather than a quality claim.
 
 ---
 
@@ -160,6 +176,20 @@ and both sides are normalized before comparison.
 
 ---
 
-## License
+## License and attribution
 
-Apache-2.0. The data in `data/` is derived from public GitHub activity.
+Two licences, because code and data want different terms:
+
+- **Code** (`src/`, workflows) — [Apache-2.0](LICENSE). Use it, fork it, ship it.
+- **Data** (`data/`, `STUDY.md`) — [CC BY 4.0](LICENSE-DATA). Free to use,
+  including commercially, **but attribution is required.**
+
+Copyright © 2026 Anish Bhutra.
+
+If you cite these numbers — in a blog post, a comparison page, a deck, or a
+product claim — attribute them to this repository and link back to it. That is a
+licence condition for the dataset, not a courtesy request.
+
+The underlying facts are public GitHub activity and nobody owns those. What is
+licensed here is the compilation: the sampling design, the bot registry, the
+classification, and the derived results.

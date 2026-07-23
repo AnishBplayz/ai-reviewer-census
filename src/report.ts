@@ -64,29 +64,52 @@ export function toMarkdown(r: StudyResult): string {
   p(`| AI reviewers | ${r.sample.threadsFromAi} | ${r.action.aiActionRate}% |`);
   p();
 
-  p('## Per-vendor');
+  p('## Per-vendor presence');
   p();
-  p('> **This is not a ranking.** Rows marked ⚠ are below the sample floor ' +
-    `(${MIN_REPOS_FOR_VENDOR_SIGNAL} repositories or ${MIN_THREADS_FOR_VENDOR_SIGNAL} threads) ` +
-    'and say more about which repositories happened to be sampled than about the vendor. ' +
-    'The table is published so the composition of the corpus is visible, not to compare tools.');
+  p('How much of the corpus each reviewer accounts for. These are census counts — ' +
+    'how often a tool was encountered and how much it says — not quality measures.');
   p();
-  p('| Vendor | Repos | PRs | Threads | Per PR | Action rate | Resolved | Avg length |');
-  p('| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |');
+  p('| Vendor | Repos | PRs | Threads | Threads per PR | Avg comment length |');
+  p('| --- | ---: | ---: | ---: | ---: | ---: |');
   for (const s of r.vendors) {
     const thin =
       s.repos < MIN_REPOS_FOR_VENDOR_SIGNAL || s.threads < MIN_THREADS_FOR_VENDOR_SIGNAL;
     p(
-      `| ${thin ? '⚠ ' : ''}${s.vendor} | ${s.repos} | ${s.pulls} | ${s.threads} | ${s.threadsPerPull} | ` +
-        `${s.actionRate}% | ${s.resolveRate}% | ${s.avgBodyLength} |`,
+      `| ${thin ? '⚠ ' : ''}${s.vendor} | ${s.repos} | ${s.pulls} | ${s.threads} | ` +
+        `${s.threadsPerPull} | ${s.avgBodyLength} |`,
     );
   }
   p();
-  p('_Action rate = share of inline threads whose anchored code changed afterwards ' +
-    '(GitHub marks the thread outdated). It is a proxy, not proof — an unrelated edit ' +
-    'to the same region also outdates a thread. It is also biased toward reviewers that ' +
-    'comment early in a PR\'s life, since more subsequent commits can outdate their threads. ' +
-    'Resolve rate is reported alongside for that reason._');
+  p(`⚠ = below the sample floor (${MIN_REPOS_FOR_VENDOR_SIGNAL} repositories or ` +
+    `${MIN_THREADS_FOR_VENDOR_SIGNAL} threads); reflects which repositories happened to be ` +
+    'sampled more than the vendor itself.');
+  p();
+
+  // Per-vendor action rates are computed and stored in report.json, but not
+  // rendered as a comparison. Publishing them as a table invites a ranking the
+  // data cannot support yet: reviewers differ in comments-per-PR (a chattier
+  // tool mechanically scores lower), sit in non-overlapping repo populations,
+  // and comment at different points in a PR's life, which the isOutdated proxy
+  // is sensitive to. Withholding the comparison is a deliberate call, not an
+  // omission — the raw inputs stay public so anyone can compute it themselves.
+  p('## Why there is no per-vendor action rate here');
+  p();
+  p('Action rates **are** computed per vendor and stored in `data/report.json`. They are ' +
+    'deliberately not rendered as a comparison table, because the data cannot yet support ' +
+    'the ranking readers would take from one:');
+  p();
+  p('- Reviewers differ in volume. A tool posting more threads per PR mechanically scores ' +
+    'a lower hit rate, independent of quality.');
+  p('- Vendors occupy largely non-overlapping sets of repositories, so their scores reflect ' +
+    'different codebases, languages, and review cultures.');
+  p('- The `isOutdated` proxy is sensitive to *when* in a pull request a comment lands, and ' +
+    'reviewers differ systematically in that.');
+  p();
+  p('None of these are controlled for. The aggregate human-versus-AI gap above is reported ' +
+    'because it is large, stable across sample sizes, and biased *against* the conclusion ' +
+    'drawn from it. A vendor-versus-vendor gap is neither.');
+  p();
+  p('The raw scans are public. If you want to compute it, `data/scans.jsonl` has everything.');
   p();
 
   if (r.duplication.topCollidingPairs.length) {

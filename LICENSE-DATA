@@ -1,0 +1,42 @@
+Data licence — AI Code Review Census
+====================================
+
+Copyright (c) 2026 Anish Bhutra.
+
+The dataset in `data/` and the generated results in `STUDY.md` are licensed under
+the Creative Commons Attribution 4.0 International License (CC BY 4.0).
+
+    https://creativecommons.org/licenses/by/4.0/
+
+You are free to share and adapt this data for any purpose, including
+commercially, provided you give appropriate credit, link to this repository, and
+indicate if changes were made.
+
+What this covers
+----------------
+
+The underlying facts — public pull request activity on GitHub — are not owned by
+anyone and are not claimed here. What is licensed is the compilation and the
+work that produced it: the sampling design and star-band stratification, the bot
+identity registry and its classification into AI reviewers, static analysis, and
+infrastructure, the derived metrics, and the assembled corpus.
+
+Attribution
+-----------
+
+If you cite these numbers anywhere — a blog post, a comparison page, a
+conference talk, a slide deck, marketing copy, or a product claim — credit:
+
+    AI Code Review Census — https://github.com/AnishBplayz/ai-reviewer-census
+
+Attribution is a condition of the licence, not a request.
+
+A note for vendors
+------------------
+
+This repository deliberately does not publish a per-vendor quality ranking. The
+confounds are documented in the README. If you quote these numbers in a way that
+implies a ranking the study explicitly declines to make, you are misrepresenting
+the source, whatever the licence permits.
+
+The code in this repository is licensed separately under Apache-2.0. See LICENSE.
