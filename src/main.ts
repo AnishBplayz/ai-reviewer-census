@@ -39,11 +39,41 @@ function flag(name: string, fallback: number): number {
   return hit ? Number(hit.split('=')[1]) : fallback;
 }
 
+/**
+ * Star-band strata. Each gets its own 1000-result search window, so the
+ * reachable population is roughly 1000 × strata rather than 1000 total.
+ * Bands are deliberately uneven — repository counts fall off steeply with
+ * stars, so the high bands are wider to hold a comparable population.
+ */
+const STRATA: Array<{ label: string; min: number; max: number | null }> = [
+  { label: '100-249',    min: 100,   max: 249 },
+  { label: '250-499',    min: 250,   max: 499 },
+  { label: '500-999',    min: 500,   max: 999 },
+  { label: '1k-2.4k',    min: 1000,  max: 2499 },
+  { label: '2.5k-9.9k',  min: 2500,  max: 9999 },
+  { label: '10k+',       min: 10000, max: null },
+];
+
+function emptyState(): ScanState {
+  return { strataPages: {}, exhaustedStrata: [], scannedRepoKeys: [], runs: [] };
+}
+
 async function loadState(): Promise<ScanState> {
-  if (process.argv.includes('--reset') || !existsSync(STATE)) {
-    return { nextSearchPage: 1, scannedRepoKeys: [], runs: [] };
-  }
-  return JSON.parse(await readFile(STATE, 'utf8')) as ScanState;
+  if (process.argv.includes('--reset') || !existsSync(STATE)) return emptyState();
+
+  const raw = JSON.parse(await readFile(STATE, 'utf8')) as Partial<ScanState> & {
+    nextSearchPage?: number;
+  };
+
+  // Migrate state written before stratified sampling existed. The scanned-repo
+  // set is the part worth keeping; the old single-frame page cursor is
+  // meaningless now and is discarded rather than mapped onto a stratum.
+  return {
+    strataPages: raw.strataPages ?? {},
+    exhaustedStrata: raw.exhaustedStrata ?? [],
+    scannedRepoKeys: raw.scannedRepoKeys ?? [],
+    runs: raw.runs ?? [],
+  };
 }
 
 async function loadAllScans(): Promise<RepoScan[]> {
@@ -117,36 +147,71 @@ async function main(): Promise<void> {
   // narrowing it so far that only hyperactive repos qualify.
   const pushedAfter = new Date(Date.now() - 90 * 864e5).toISOString().slice(0, 10);
 
-  console.log(`\nDiffHawk premise study`);
-  console.log(`  target: ${repoTarget} new repos × ${prCount} PRs, stars >= ${minStars}`);
+  const active = STRATA.filter(
+    (s) => s.min >= minStars && !state.exhaustedStrata.includes(s.label),
+  );
+
+  console.log(`\nAI Code Review Census — collector`);
+  console.log(`  target: ${repoTarget} new repos × ${prCount} PRs`);
+  console.log(`  strata: ${active.map((s) => s.label).join(', ') || 'none left'}`);
   console.log(`  already scanned: ${seen.size} repos\n`);
 
-  const fresh: RepoScan[] = [];
-  let page = state.nextSearchPage;
-  let consecutiveEmptyPages = 0;
+  if (active.length === 0) {
+    console.log('Every stratum is exhausted. Widen STRATA or shorten the push window.\n');
+  }
 
-  while (fresh.length < repoTarget && consecutiveEmptyPages < 3) {
+  const fresh: RepoScan[] = [];
+  // Round-robin across strata so the corpus stays balanced across star bands
+  // rather than filling the smallest band first.
+  let stratumIndex = 0;
+  let consecutiveDry = 0;
+  let rateLimited = false;
+
+  while (fresh.length < repoTarget && active.length > 0 && consecutiveDry < active.length * 2) {
+    const stratum = active[stratumIndex % active.length];
+    stratumIndex++;
+    const page = state.strataPages[stratum.label] ?? 1;
+
     let candidates;
     try {
-      candidates = await client.searchRepos({ page, perPage: 50, minStars, pushedAfter });
+      candidates = await client.searchRepos({
+        page,
+        perPage: 50,
+        minStars: stratum.min,
+        maxStars: stratum.max,
+        pushedAfter,
+      });
     } catch (err) {
-      console.error(`  search failed on page ${page}: ${(err as Error).message}`);
-      break;
-    }
-
-    // GitHub's search API caps out at 1000 results; wrap rather than stall.
-    if (candidates.length === 0) {
-      consecutiveEmptyPages++;
-      page = page >= 20 ? 1 : page + 1;
+      const msg = (err as Error).message;
+      // 422 is GitHub refusing to page past its 1000-result ceiling. That
+      // stratum is spent; retiring it is correct, not an error to retry.
+      if (msg.includes('422') || msg.includes('1000 search results')) {
+        console.log(`  stratum ${stratum.label} exhausted at page ${page}`);
+        state.exhaustedStrata.push(stratum.label);
+        active.splice(active.indexOf(stratum), 1);
+        stratumIndex = 0;
+      } else {
+        console.error(`  search failed (${stratum.label} p${page}): ${msg}`);
+        consecutiveDry++;
+      }
       continue;
     }
-    consecutiveEmptyPages = 0;
+
+    if (candidates.length === 0) {
+      state.exhaustedStrata.push(stratum.label);
+      active.splice(active.indexOf(stratum), 1);
+      stratumIndex = 0;
+      continue;
+    }
+
+    state.strataPages[stratum.label] = page + 1;
 
     const unseen = candidates.filter((r) => !seen.has(`${r.owner}/${r.name}`));
     if (unseen.length === 0) {
-      page++;
+      consecutiveDry++;
       continue;
     }
+    consecutiveDry = 0;
 
     for (const repo of unseen) {
       if (fresh.length >= repoTarget) break;
@@ -168,17 +233,15 @@ async function main(): Promise<void> {
       } catch (err) {
         if (err instanceof RateLimitedError) {
           console.log(`\n  Rate limit exhausted (resets ${err.resetAt}). Checkpointing.`);
-          page = Number.MAX_SAFE_INTEGER;
+          rateLimited = true;
           break;
         }
         console.error(`  ${key} failed: ${(err as Error).message}`);
       }
     }
-    page = page === Number.MAX_SAFE_INTEGER ? state.nextSearchPage : page + 1;
-    if (page === Number.MAX_SAFE_INTEGER) break;
+    if (rateLimited) break;
   }
 
-  state.nextSearchPage = page > 20 ? 1 : page;
   state.scannedRepoKeys = [...seen];
   state.runs.push({
     startedAt: new Date().toISOString(),

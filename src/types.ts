@@ -56,8 +56,13 @@ export interface RepoScan {
 }
 
 export interface ScanState {
-  /** Next page of the repo search to consume, so scheduled runs advance. */
-  nextSearchPage: number;
+  /**
+   * Per-stratum page cursor, keyed by star-band label. Each stratum gets its
+   * own 1000-result search window, so progress is tracked independently.
+   */
+  strataPages: Record<string, number>;
+  /** Strata whose 1000-result window has been fully consumed. */
+  exhaustedStrata: string[];
   scannedRepoKeys: string[];
   runs: Array<{ startedAt: string; repos: number; pulls: number }>;
 }

@@ -117,20 +117,30 @@ export class GitHubClient {
   }
 
   /**
-   * Search for active public repositories.
+   * Search for active public repositories within one star band.
    *
-   * Sampling frame is deliberately simple and reported in the methodology:
-   * repos above a star floor with recent pushes. It is biased toward popular
-   * OSS and away from private corporate monorepos — stated as a limitation
-   * rather than silently ignored.
+   * Sampling frame: public, non-archived repos with a recent push, partitioned
+   * into star strata. Biased toward popular open source and away from private
+   * corporate monorepos — stated as a limitation rather than silently ignored.
    */
   async searchRepos(params: {
     page: number;
     perPage: number;
     minStars: number;
+    /** Inclusive upper bound; null means unbounded (the top stratum). */
+    maxStars: number | null;
     pushedAfter: string;
   }): Promise<RepoRef[]> {
-    const q = `stars:>=${params.minStars} pushed:>${params.pushedAfter} is:public archived:false`;
+    // GitHub serves at most 1000 results per distinct query. A single
+    // `stars:>=200` frame therefore caps the reachable population at 1000 repos
+    // no matter how many pages are requested — which is exactly the wall this
+    // hit at n=462. Partitioning by star band gives each stratum its own
+    // 1000-result window and removes the ceiling.
+    const starQuery =
+      params.maxStars === null
+        ? `stars:>=${params.minStars}`
+        : `stars:${params.minStars}..${params.maxStars}`;
+    const q = `${starQuery} pushed:>${params.pushedAfter} is:public archived:false`;
     const url =
       `${REST}/search/repositories?q=${encodeURIComponent(q)}` +
       `&sort=updated&order=desc&per_page=${params.perPage}&page=${params.page}`;

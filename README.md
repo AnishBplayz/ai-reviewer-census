@@ -68,9 +68,12 @@ See [`STUDY.md`](STUDY.md) for the current generated table, and
 
 ## Method
 
-1. **Sample.** Public, non-archived repositories above a star floor with a push
-   in the last 90 days, drawn from GitHub search ordered by last update. Each
-   collection run consumes the next slice of the search space, so the corpus
+1. **Sample.** Public, non-archived repositories with a push in the last 90
+   days, drawn from GitHub search and **stratified into star bands**
+   (100–249, 250–499, 500–999, 1k–2.4k, 2.5k–9.9k, 10k+), sampled round-robin.
+   Stratification is not cosmetic: GitHub serves at most 1,000 results per
+   distinct query, so an unpartitioned frame silently caps the study at 1,000
+   repositories. Each run consumes the next page of each stratum, so the corpus
    grows rather than being re-sampled.
 2. **Scan.** For each repository, the most recently updated pull requests. Every
    comment author, review author, and inline review thread is recorded as a raw
