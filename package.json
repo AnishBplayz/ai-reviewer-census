@@ -1,0 +1,16 @@
+{
+  "name": "ai-reviewer-census",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "How many repositories actually run AI code reviewers, how often those reviewers duplicate each other, and how often anyone acts on them. Measured from real GitHub data.",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=22.6.0"
+  },
+  "scripts": {
+    "study": "node --experimental-strip-types --no-warnings --env-file-if-exists=.env src/main.ts",
+    "analyze": "npm run study -- --analyze-only",
+    "validate": "node --experimental-strip-types --no-warnings --env-file-if-exists=.env src/validate.ts"
+  }
+}

@@ -1,0 +1,69 @@
+name: Collect
+
+# Grows the corpus twice a day and commits both the derived report and the raw
+# scans. The raw data is committed deliberately: a study whose inputs nobody
+# can inspect is a claim, not a result.
+
+on:
+  schedule:
+    # 03:17 and 15:17 UTC. Off-the-hour on purpose — scheduled workflows that
+    # land on :00 queue behind everyone else's and get delayed.
+    - cron: '17 3,15 * * *'
+  workflow_dispatch:
+    inputs:
+      repos:
+        description: 'Repos to scan this run'
+        default: '150'
+      prs:
+        description: 'PRs per repo'
+        default: '25'
+
+permissions:
+  contents: write
+
+concurrency:
+  # Two runs appending to the same log would interleave writes and corrupt it.
+  group: collect
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Verify bot detection before collecting
+        # A vendor renaming its GitHub App silently drops coverage toward zero,
+        # which is indistinguishable from a real negative result. Fail loudly
+        # rather than quietly recording bad data into the corpus.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node --experimental-strip-types --no-warnings src/validate.ts
+
+      - name: Collect
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          node --experimental-strip-types --no-warnings src/main.ts \
+            --repos=${{ github.event.inputs.repos || 150 }} \
+            --prs=${{ github.event.inputs.prs || 25 }}
+
+      - name: Commit corpus and report
+        run: |
+          git config user.name  'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add STUDY.md data/report.json data/scans.jsonl
+          if git diff --staged --quiet; then
+            echo 'Nothing changed.'
+          else
+            REPOS=$(node -e "console.log(require('./data/report.json').sample.reposScanned)")
+            PCT=$(node -e "console.log(require('./data/report.json').coverage.pctReposWith2Plus)")
+            git commit -m "data: corpus now ${REPOS} repos, ${PCT}% run 2+ reviewers"
+            git push
+          fi
