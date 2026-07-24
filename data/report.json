@@ -1,27 +1,27 @@
 {
-  "generatedAt": "2026-07-23T18:42:32.759Z",
+  "generatedAt": "2026-07-24T06:10:32.525Z",
   "sample": {
-    "reposScanned": 813,
+    "reposScanned": 963,
     "reposWithError": 234,
-    "pullsScanned": 22514,
-    "pullsWithAnyAiReview": 4447,
-    "threadsTotal": 23634,
-    "threadsFromAi": 11559,
-    "threadsFromHumans": 10614
+    "pullsScanned": 25308,
+    "pullsWithAnyAiReview": 5031,
+    "threadsTotal": 25703,
+    "threadsFromAi": 12722,
+    "threadsFromHumans": 11404
   },
   "coverage": {
-    "reposWithAnyAi": 311,
-    "reposWith2Plus": 99,
-    "reposWith3Plus": 27,
-    "pctReposWithAnyAi": 38.3,
-    "pctReposWith2Plus": 12.2,
-    "pctReposWith3Plus": 3.3
+    "reposWithAnyAi": 355,
+    "reposWith2Plus": 114,
+    "reposWith3Plus": 31,
+    "pctReposWithAnyAi": 36.9,
+    "pctReposWith2Plus": 11.8,
+    "pctReposWith3Plus": 3.2
   },
   "duplication": {
-    "multiBotPulls": 988,
-    "overlappingPairs": 415,
-    "aiThreadsOnMultiBotPulls": 4378,
-    "pctOverlapping": 9.5,
+    "multiBotPulls": 1070,
+    "overlappingPairs": 442,
+    "aiThreadsOnMultiBotPulls": 4709,
+    "pctOverlapping": 9.4,
     "topCollidingPairs": [
       {
         "pair": "CodeRabbit + Codex",
@@ -36,20 +36,20 @@
         "count": 38
       },
       {
+        "pair": "CodeRabbit + Copilot",
+        "count": 36
+      },
+      {
         "pair": "Claude + Codex",
         "count": 34
       },
       {
         "pair": "Codex + Copilot",
-        "count": 27
-      },
-      {
-        "pair": "CodeRabbit + Copilot",
-        "count": 25
+        "count": 30
       },
       {
         "pair": "Copilot + Gemini",
-        "count": 25
+        "count": 26
       },
       {
         "pair": "Codex + Greptile",
@@ -66,49 +66,49 @@
     ]
   },
   "action": {
-    "aiActionRate": 44.2,
-    "humanActionRate": 59.8,
-    "humanToAiRatio": 1.35
+    "aiActionRate": 44,
+    "humanActionRate": 59.7,
+    "humanToAiRatio": 1.36
   },
   "vendors": [
     {
       "vendor": "CodeRabbit",
-      "repos": 70,
-      "pulls": 841,
-      "threads": 3606,
-      "outdated": 1316,
-      "resolved": 2472,
-      "avgBodyLength": 2589,
-      "avgRepliesPerThread": 0.5,
-      "threadsPerPull": 4.29,
-      "actionRate": 36.5,
-      "resolveRate": 68.6
+      "repos": 82,
+      "pulls": 946,
+      "threads": 3895,
+      "outdated": 1401,
+      "resolved": 2634,
+      "avgBodyLength": 2592,
+      "avgRepliesPerThread": 0.49,
+      "threadsPerPull": 4.12,
+      "actionRate": 36,
+      "resolveRate": 67.6
     },
     {
       "vendor": "Copilot",
-      "repos": 139,
-      "pulls": 719,
-      "threads": 3098,
-      "outdated": 1734,
-      "resolved": 2170,
-      "avgBodyLength": 347,
+      "repos": 157,
+      "pulls": 799,
+      "threads": 3342,
+      "outdated": 1822,
+      "resolved": 2289,
+      "avgBodyLength": 346,
       "avgRepliesPerThread": 0.29,
-      "threadsPerPull": 4.31,
-      "actionRate": 56,
-      "resolveRate": 70
+      "threadsPerPull": 4.18,
+      "actionRate": 54.5,
+      "resolveRate": 68.5
     },
     {
       "vendor": "Codex",
-      "repos": 64,
-      "pulls": 582,
-      "threads": 1721,
-      "outdated": 704,
-      "resolved": 908,
-      "avgBodyLength": 698,
+      "repos": 73,
+      "pulls": 658,
+      "threads": 2053,
+      "outdated": 878,
+      "resolved": 1182,
+      "avgBodyLength": 699,
       "avgRepliesPerThread": 0.35,
-      "threadsPerPull": 2.96,
-      "actionRate": 40.9,
-      "resolveRate": 52.8
+      "threadsPerPull": 3.12,
+      "actionRate": 42.8,
+      "resolveRate": 57.6
     },
     {
       "vendor": "Greptile",
@@ -125,42 +125,42 @@
     },
     {
       "vendor": "Gemini",
-      "repos": 20,
-      "pulls": 214,
-      "threads": 689,
-      "outdated": 276,
-      "resolved": 329,
-      "avgBodyLength": 793,
-      "avgRepliesPerThread": 0.4,
-      "threadsPerPull": 3.22,
-      "actionRate": 40.1,
-      "resolveRate": 47.8
+      "repos": 25,
+      "pulls": 266,
+      "threads": 866,
+      "outdated": 371,
+      "resolved": 399,
+      "avgBodyLength": 770,
+      "avgRepliesPerThread": 0.34,
+      "threadsPerPull": 3.26,
+      "actionRate": 42.8,
+      "resolveRate": 46.1
     },
     {
       "vendor": "Cursor",
-      "repos": 16,
-      "pulls": 130,
-      "threads": 465,
-      "outdated": 188,
-      "resolved": 388,
-      "avgBodyLength": 2642,
+      "repos": 18,
+      "pulls": 143,
+      "threads": 529,
+      "outdated": 209,
+      "resolved": 443,
+      "avgBodyLength": 2654,
       "avgRepliesPerThread": 0.29,
-      "threadsPerPull": 3.58,
-      "actionRate": 40.4,
-      "resolveRate": 83.4
+      "threadsPerPull": 3.7,
+      "actionRate": 39.5,
+      "resolveRate": 83.7
     },
     {
       "vendor": "Claude",
-      "repos": 14,
-      "pulls": 111,
-      "threads": 451,
-      "outdated": 185,
-      "resolved": 323,
-      "avgBodyLength": 2388,
+      "repos": 15,
+      "pulls": 115,
+      "threads": 459,
+      "outdated": 188,
+      "resolved": 326,
+      "avgBodyLength": 2442,
       "avgRepliesPerThread": 0.62,
-      "threadsPerPull": 4.06,
+      "threadsPerPull": 3.99,
       "actionRate": 41,
-      "resolveRate": 71.6
+      "resolveRate": 71
     },
     {
       "vendor": "cubic",
@@ -177,16 +177,29 @@
     },
     {
       "vendor": "Devin",
-      "repos": 7,
-      "pulls": 89,
-      "threads": 244,
-      "outdated": 104,
-      "resolved": 172,
-      "avgBodyLength": 2022,
-      "avgRepliesPerThread": 0.62,
-      "threadsPerPull": 2.74,
-      "actionRate": 42.6,
-      "resolveRate": 70.5
+      "repos": 8,
+      "pulls": 101,
+      "threads": 261,
+      "outdated": 111,
+      "resolved": 185,
+      "avgBodyLength": 2025,
+      "avgRepliesPerThread": 0.61,
+      "threadsPerPull": 2.58,
+      "actionRate": 42.5,
+      "resolveRate": 70.9
+    },
+    {
+      "vendor": "Sourcery",
+      "repos": 2,
+      "pulls": 11,
+      "threads": 34,
+      "outdated": 11,
+      "resolved": 32,
+      "avgBodyLength": 3010,
+      "avgRepliesPerThread": 0.24,
+      "threadsPerPull": 3.09,
+      "actionRate": 32.4,
+      "resolveRate": 94.1
     },
     {
       "vendor": "Graphite",
@@ -200,19 +213,6 @@
       "threadsPerPull": 1.4,
       "actionRate": 14.3,
       "resolveRate": 42.9
-    },
-    {
-      "vendor": "Sourcery",
-      "repos": 1,
-      "pulls": 1,
-      "threads": 2,
-      "outdated": 0,
-      "resolved": 0,
-      "avgBodyLength": 1595,
-      "avgRepliesPerThread": 0,
-      "threadsPerPull": 2,
-      "actionRate": 0,
-      "resolveRate": 0
     },
     {
       "vendor": "Pullfrog",
@@ -239,7 +239,11 @@
     },
     {
       "login": "pkg-pr-new",
-      "count": 176
+      "count": 204
+    },
+    {
+      "login": "cloudflare-workers-and-pages",
+      "count": 158
     },
     {
       "login": "socket-security",
@@ -250,12 +254,12 @@
       "count": 155
     },
     {
-      "login": "cloudflare-workers-and-pages",
-      "count": 148
-    },
-    {
       "login": "dd-octo-sts",
       "count": 114
+    },
+    {
+      "login": "github-advanced-security",
+      "count": 103
     },
     {
       "login": "google-oss-prow",
@@ -274,12 +278,12 @@
       "count": 87
     },
     {
-      "login": "github-advanced-security",
-      "count": 83
-    },
-    {
       "login": "gitar-bot",
       "count": 73
+    },
+    {
+      "login": "qoderai",
+      "count": 61
     },
     {
       "login": "stale",
@@ -306,105 +310,101 @@
       "count": 44
     },
     {
+      "login": "copilot-swe-agent",
+      "count": 43
+    },
+    {
       "login": "infra-vault-gh-plugin-prod",
       "count": 42
     },
     {
-      "login": "copilot-swe-agent",
-      "count": 41
-    },
-    {
-      "login": "qoderai",
-      "count": 37
-    },
-    {
       "login": "linear-code",
-      "count": 36
+      "count": 40
     },
     {
-      "login": "argos-ci",
-      "count": 36
+      "login": "relativeci",
+      "count": 38
     },
     {
-      "login": "gh-worker-devflow-routing-ef8351",
-      "count": 34
+      "login": "sentry",
+      "count": 37
     }
   ],
   "languages": [
     {
       "language": "TypeScript",
-      "repos": 147,
-      "pctWith2Plus": 23.8
+      "repos": 166,
+      "pctWith2Plus": 24.7
     },
     {
       "language": "Python",
-      "repos": 112,
-      "pctWith2Plus": 18.8
+      "repos": 147,
+      "pctWith2Plus": 17
     },
     {
       "language": "Rust",
-      "repos": 67,
-      "pctWith2Plus": 25.4
-    },
-    {
-      "language": "C++",
-      "repos": 55,
-      "pctWith2Plus": 3.6
-    },
-    {
-      "language": "Go",
-      "repos": 55,
-      "pctWith2Plus": 1.8
+      "repos": 75,
+      "pctWith2Plus": 22.7
     },
     {
       "language": "Unknown",
-      "repos": 49,
+      "repos": 66,
       "pctWith2Plus": 0
+    },
+    {
+      "language": "Go",
+      "repos": 61,
+      "pctWith2Plus": 1.6
+    },
+    {
+      "language": "C++",
+      "repos": 59,
+      "pctWith2Plus": 6.8
     },
     {
       "language": "Java",
-      "repos": 44,
-      "pctWith2Plus": 13.6
+      "repos": 48,
+      "pctWith2Plus": 12.5
     },
     {
       "language": "JavaScript",
-      "repos": 42,
-      "pctWith2Plus": 9.5
+      "repos": 47,
+      "pctWith2Plus": 10.6
     },
     {
       "language": "C",
-      "repos": 33,
-      "pctWith2Plus": 15.2
+      "repos": 36,
+      "pctWith2Plus": 13.9
     },
     {
       "language": "C#",
-      "repos": 25,
-      "pctWith2Plus": 4
+      "repos": 29,
+      "pctWith2Plus": 3.4
     },
     {
       "language": "Shell",
-      "repos": 21,
-      "pctWith2Plus": 0
+      "repos": 28,
+      "pctWith2Plus": 3.6
     },
     {
       "language": "HTML",
-      "repos": 18,
+      "repos": 22,
       "pctWith2Plus": 0
     },
     {
       "language": "Kotlin",
-      "repos": 16,
-      "pctWith2Plus": 6.3
-    },
-    {
-      "language": "PHP",
-      "repos": 13,
-      "pctWith2Plus": 15.4
+      "repos": 19,
+      "pctWith2Plus": 10.5
     },
     {
       "language": "Swift",
-      "repos": 13,
-      "pctWith2Plus": 15.4
+      "repos": 17,
+      "pctWith2Plus": 11.8
+    },
+    {
+      "language": "PHP",
+      "repos": 16,
+      "pctWith2Plus": 12.5
     }
   ]
 }
